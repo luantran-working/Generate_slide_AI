@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Slide_Generate
+/Slide_Generate/bin/Debug/net8.0
+/Slide_Generate/obj
+/AI_API/bin/Debug/net8.0
+/AI_API/obj
+/Domain/bin/Debug/net8.0
+/Domain/obj
+/Repository/bin/Debug/net8.0
+/Repository/obj
+/AI_API/bin/Release/net8.0
+/Domain/bin/Release/net8.0

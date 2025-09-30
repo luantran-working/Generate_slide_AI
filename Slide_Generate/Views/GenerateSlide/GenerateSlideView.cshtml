@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Công Ty Cổ Phần";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link rel="icon" type="image/x-icon" href="~/icon/newicon.ico">
+</head>
+
+<div class="min-h-screen bg-gradient-to-br from-blue-100 to-gray-50 flex flex-col font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="~/icon/iiticon.ico" alt="IIT Logo" class="h-12 w-auto">
+                <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 tracking-tight">Công Ty Cổ Phần IIT</h1>
+            </div>
+            <nav class="flex space-x-6">
+                <a href="#" class="text-gray-600 hover:text-blue-600 font-medium text-lg transition duration-300 ease-in-out">Tư Vấn</a>
+                <a href="#" class="text-gray-600 hover:text-blue-600 font-medium text-lg transition duration-300 ease-in-out">Sản Phẩm</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl w-full bg-white rounded-2xl shadow-2xl p-8 sm:p-12 transform transition-all duration-300 hover:shadow-3xl">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-900 mb-4 animate-pulse">Tạo Slide Tự Động với AI</h2>
+            <p class="text-center text-gray-500 text-lg mb-8">Nhập ý tưởng, để AI tạo slide chuyên nghiệp chỉ trong vài giây!</p>
+
+            <form id="slideForm" class="space-y-6">
+                <div>
+                    <label for="prompt" class="block text-sm font-semibold text-gray-700 mb-2">Nội dung slide</label>
+                    <textarea id="prompt" class="w-full h-48 p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 shadow-sm resize-none" placeholder="Ví dụ: Tầm quan trọng của AI trong y tế..." required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-300 flex items-center justify-center space-x-2 transform hover:scale-105">
+                    <span>Tạo Slide Ngay</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Loading state -->
+            <div id="loading" class="hidden text-center mt-8">
+                <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" stroke-dasharray="15 30" stroke-dashoffset="15" />
+                </svg>
+                <span class="text-gray-600 mt-3 block text-lg font-medium">Đang tạo slide, vui lòng chờ... (<span id="countdown">--</span>s)</span>
+            </div>
+
+            <!-- Result section -->
+            <div id="result" class="mt-10 hidden">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Kết quả Slide của bạn</h3>
+
+                <!-- Ẩn phần iframe hiển thị slide -->
+                <iframe id="slideEmbed" class="hidden"></iframe>
+
+                <p class="mt-6 text-center">
+                    <a id="slideLink" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-lg transition duration-300 space-x-2 bg-blue-100 px-6 py-3 rounded-xl hover:bg-blue-200" target="_blank">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Tải Slide (.pptx)</span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-lg">&copy; 2025 Công Ty Cổ Phần IIT. All rights reserved.</p>
+            <div class="mt-4 flex justify-center space-x-6">
+                <a href="#" class="text-gray-300 hover:text-white transition duration-300 text-sm">Liên hệ: info@iit.vn</a>
+                <a href="#" class="text-gray-300 hover:text-white transition duration-300 text-sm">Chính sách bảo mật</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+@section Scripts {
+    <script>
+        let countdownInterval;
+
+        document.getElementById("slideForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const prompt = document.getElementById("prompt").value.trim();
+            if (!prompt) {
+                alert("Vui lòng nhập nội dung slide!");
+                return;
+            }
+
+            document.getElementById("loading").classList.remove("hidden");
+            document.getElementById("result").classList.add("hidden");
+
+            let countdownTime = 30;
+            document.getElementById("countdown").innerText = countdownTime;
+            countdownInterval = setInterval(() => {
+                countdownTime--;
+                document.getElementById("countdown").innerText = countdownTime;
+                if (countdownTime <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+
+            try {
+                const response = await fetch('/generate-slide', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    alert(`Lỗi: ${responseData.error || 'Không thể tạo slide. Vui lòng thử lại sau.'}`);
+                    return;
+                }
+
+                if (responseData.embed && responseData.download && responseData.apiToken) {
+                    const embedUrl = responseData.embed.startsWith('http') ? responseData.embed : `https://${responseData.embed}`;
+                    const downloadUrl = responseData.download.startsWith('http') ? responseData.download : `https://${responseData.download}`;
+
+                    document.getElementById("slideEmbed").src = "";
+                    document.getElementById("slideEmbed").classList.add("hidden");
+
+                    document.getElementById("slideLink").href = downloadUrl;
+                    document.getElementById("slideLink").innerHTML = `
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Tải Slide (.pptx)</span>
+                    `;
+                    document.getElementById("result").classList.remove("hidden");
+                } else {
+                    alert("Không thể tạo slide. Phản hồi không chứa dữ liệu mong đợi.");
+                }
+            } catch (error) {
+                alert("Lỗi kết nối tới server. Vui lòng kiểm tra mạng hoặc thử lại sau.");
+            } finally {
+                clearInterval(countdownInterval);
+                document.getElementById("loading").classList.add("hidden");
+            }
+        });
+    </script>
+}
